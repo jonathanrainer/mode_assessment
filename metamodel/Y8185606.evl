@@ -2,7 +2,7 @@
 context Recipe {
 	constraint NameAssurance {
 		
-		check: self.name != "";
+		check: self.name.notEmpty()
 		
 		message: "All recipes have to have a name"
 		
