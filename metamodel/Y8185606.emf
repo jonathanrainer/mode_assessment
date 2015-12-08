@@ -1,6 +1,10 @@
 @namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
 package cookbooklibrary;
 
+enum Units {
+	grams; teaspoons; tablespoons; ml;
+}
+
 abstract class NamedElement {
 	attr String name;
 }
@@ -9,15 +13,45 @@ class Library {
 	val Cookbook[*] cookbooks;
 }
 
-class Cookbook extends NamedElement{
+class Cookbook extends NamedElement {
 	attr String author;
 	val Category[*] categories;
 }
 
-class Category extends NamedElement{
+class Category extends NamedElement {
 	val Recipe[1..*] recipes;
 }
 
-class Recipe extends NamedElement{
+class Recipe extends NamedElement {
 
 }
+
+abstract class IngredientBase extends NamedElement {
+	
+}
+
+abstract class InstructionBase {
+	
+}
+
+class Instruction extends InstructionBase {
+	attr String text;
+}
+
+class InstructionRecipe extends InstructionBase {
+	ref Recipe[1] linked;
+}
+
+class IngredientRecipe extends IngredientBase {
+	ref Recipe[1] linked;
+}
+
+class Ingredient extends IngredientBase {
+	val Measure amount;
+}
+
+class Measure {
+	attr String unit;
+	attr Integer amount;
+}
+
