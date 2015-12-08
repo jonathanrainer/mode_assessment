@@ -23,7 +23,8 @@ class Category extends NamedElement {
 }
 
 class Recipe extends NamedElement {
-
+	val InstructionBase[1..*] instructions;
+	val IngredientBase[1..*] ingredients;
 }
 
 abstract class IngredientBase extends NamedElement {
@@ -31,11 +32,11 @@ abstract class IngredientBase extends NamedElement {
 }
 
 abstract class InstructionBase {
-	
+	attr String text;
 }
 
 class Instruction extends InstructionBase {
-	attr String text;
+	
 }
 
 class InstructionRecipe extends InstructionBase {
@@ -43,7 +44,7 @@ class InstructionRecipe extends InstructionBase {
 }
 
 class IngredientRecipe extends IngredientBase {
-	ref Recipe[1] linked;
+	ref Recipe[1] ingredient;
 }
 
 class Ingredient extends IngredientBase {

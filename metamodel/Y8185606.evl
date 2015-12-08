@@ -1,0 +1,10 @@
+
+context Recipe {
+	constraint NameAssurance {
+		
+		check: self.name != "";
+		
+		message: "All recipes have to have a name"
+		
+	}
+}
