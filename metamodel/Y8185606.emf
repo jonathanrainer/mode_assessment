@@ -40,11 +40,11 @@ class Instruction extends InstructionBase {
 }
 
 class InstructionRecipe extends InstructionBase {
-	ref Recipe[1] linked;
+	ref Recipe[1] recipe;
 }
 
 class IngredientRecipe extends IngredientBase {
-	ref Recipe[1] ingredient;
+	ref Recipe[1] recipe;
 }
 
 class Ingredient extends IngredientBase {

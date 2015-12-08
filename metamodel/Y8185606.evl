@@ -69,3 +69,21 @@ context Ingredient {
 		"greater than 0."	
 	}
 }
+
+context Recipe {
+
+	constraint NoSelfUsage {
+	
+	check {
+		var instruction_links = self.instructions.select(i:InstructionRecipe|true);
+		var ingredient_links = self.ingredients.select(i:IngredientRecipe|true);
+		return 
+		instruction_links.forAll(i_r : InstructionRecipe | i_r.recipe <> self)
+		and ingredient_links.forAll(i_r : IngredientRecipe | i_r.recipe <> self);
+	}
+	
+	message: "Recipes cannot use themselves. Please alter \"" + self.name + "\""
+	+ " accordingly."
+	
+	}
+}
