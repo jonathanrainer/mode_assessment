@@ -1,14 +1,16 @@
-
-context Recipe {
+context NamedElement {
 	constraint NameNotEmpty {
 		
 		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
 		
-		message: 	"Please give all recipes a name. " +
-					"In addition ensure that no recipe's name starts with " + 
-					"whitespace."
-		
-	}
+		message: 	"Please ensure that all objects of type " 
+					+ self.type().name + "are not blank. In addition ensure "+ 
+					"that none of these names starts with whitespace."
+	} 
+}
+
+context Recipe {
+	
 	critique NameCapitalisation {
 	
 		guard: self.satisfies("NameNotEmpty")
@@ -40,16 +42,6 @@ context Recipe {
 
 context Category {
 
-	constraint NameNotEmpty {
-		
-		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
-		
-		message: 	"Please give all Categories have a name. " +
-					"In addition ensure that no category's name starts with " + 
-					"whitespace."
-		
-	}
-
 	constraint UniqueName {
 	
 		guard: self.satisfies("NameNotEmpty")
@@ -62,4 +54,18 @@ context Category {
 	
 	}
 
+}
+
+context Ingredient {
+
+	constraint NonZeroQuantities {
+	
+		check: self.amount.amount > 0
+		
+		message: "\"" + self.name + "\" cannot be included in the \"" 
+		+ Recipe.all().selectOne(r: Recipe|r.ingredients.includes(self)).name +
+		"\" recipe if it contains 0 " + self.amount.unit + 
+		". Please change this to an amount strictly " + 
+		"greater than 0."	
+	}
 }
