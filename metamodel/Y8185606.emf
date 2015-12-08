@@ -1,0 +1,11 @@
+@namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
+package cookbooklibrary;
+
+class Library {
+	attr String owner;
+	val Cookbook[*] cookbooks;
+}
+
+class Cookbook {
+	attr String name;
+}
