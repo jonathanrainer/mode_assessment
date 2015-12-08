@@ -1,10 +1,65 @@
 
 context Recipe {
-	constraint NameAssurance {
+	constraint NameNotEmpty {
 		
-		check: self.name.notEmpty()
+		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
 		
-		message: "All recipes have to have a name"
+		message: 	"Please give all recipes a name. " +
+					"In addition ensure that no recipe's name starts with " + 
+					"whitespace."
 		
 	}
+	critique NameCapitalisation {
+	
+		guard: self.satisfies("NameNotEmpty")
+		
+		check { 
+			for (part : String in self.name.split(" ")) {
+				if (part.firstToUpperCase().charAt(0) <> part.charAt(0))
+				{
+					return false;
+				}
+			}
+			return true;
+		 }
+		 
+		 fix {
+		 	title: "Correcting Capitalisation"
+		 	
+		 	do {
+		 		var new_string = "";
+		 		var string_elements = self.name.split(" ");
+		 		for (element : String in string_elements){
+		 			new_string = new_string + element.firstToUpperCase() + " ";
+		 		}
+		 		self.name = new_string.trim();
+		 	}
+		 }
+	}
+}
+
+context Category {
+
+	constraint NameNotEmpty {
+		
+		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
+		
+		message: 	"Please give all Categories have a name. " +
+					"In addition ensure that no category's name starts with " + 
+					"whitespace."
+		
+	}
+
+	constraint UniqueName {
+	
+		guard: self.satisfies("NameNotEmpty")
+	
+		check: not Category.all().excluding(self).exists(
+		c: Category | c.name = self.name)
+		
+		message: "Categories cannot have duplicated names. Please rename one " 
+		+ "of the \"" + self.name + "\" categories to something else."
+	
+	}
+
 }
