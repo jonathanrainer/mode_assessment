@@ -1,11 +1,23 @@
 @namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
 package cookbooklibrary;
 
+abstract class NamedElement {
+	attr String name;
+}
+
 class Library {
-	attr String owner;
 	val Cookbook[*] cookbooks;
 }
 
-class Cookbook {
-	attr String name;
+class Cookbook extends NamedElement{
+	attr String author;
+	val Category[*] categories;
+}
+
+class Category extends NamedElement{
+	val Recipe[1..*] recipes;
+}
+
+class Recipe extends NamedElement{
+
 }
