@@ -1,7 +1,7 @@
 @namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
 package cookbooklibrary;
 
-enum Units {
+enum Unit {
 	grams; teaspoons; tablespoons; ml;
 }
 
@@ -52,7 +52,7 @@ class Ingredient extends IngredientBase {
 }
 
 class Measure {
-	attr String unit;
+	attr Unit unit;
 	attr Integer amount;
 }
 
