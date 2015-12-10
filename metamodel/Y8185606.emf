@@ -19,36 +19,33 @@ class Cookbook extends NamedElement {
 }
 
 class Category extends NamedElement {
-	val Recipe[1..*] recipes;
+	val Recipe[1..*]#category recipes;
 }
 
 class Recipe extends NamedElement {
+	ref Category[1]#recipes category;
 	val InstructionBase[1..*] instructions;
 	val IngredientBase[1..*] ingredients;
 }
 
-abstract class IngredientBase extends NamedElement {
-	
-}
+abstract class IngredientBase extends NamedElement {}
 
 abstract class InstructionBase {
 	attr String text;
 }
 
-class Instruction extends InstructionBase {
-	
-}
+class Instruction extends InstructionBase {}
 
-class InstructionRecipe extends InstructionBase {
-	ref Recipe[1] recipe;
-}
+class InstructionRecipe extends InstructionBase, RecipeLink {}
 
-class IngredientRecipe extends IngredientBase {
+class IngredientRecipe extends IngredientBase, RecipeLink {}
+
+class RecipeLink {
 	ref Recipe[1] recipe;
 }
 
 class Ingredient extends IngredientBase {
-	val Measure amount;
+	val Measure[1] amount;
 }
 
 class Measure {

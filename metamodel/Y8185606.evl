@@ -3,8 +3,8 @@ context NamedElement {
 		
 		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
 		
-		message: 	"Please ensure that all objects of type " 
-					+ self.type().name + "are not blank. In addition ensure "+ 
+		message: 	"Please ensure that the name of all objects of type " 
+					+ self.type().name + " are not blank. In addition ensure "+ 
 					"that none of these names starts with whitespace."
 	} 
 }
@@ -50,7 +50,7 @@ context Category {
 		c: Category | c.name = self.name)
 		
 		message: "Categories cannot have duplicated names. Please rename one " 
-		+ "of the \"" + self.name + "\" categories to something else."
+		+ "of the categories named \"" + self.name + "\" to something else."
 	
 	}
 
@@ -59,6 +59,8 @@ context Category {
 context Ingredient {
 
 	constraint NonZeroQuantities {
+	
+		guard: self.amount.isDefined()
 	
 		check: self.amount.amount > 0
 		
@@ -70,16 +72,44 @@ context Ingredient {
 	}
 }
 
-context Recipe {
+context Cookbook {
 
-	constraint NoSelfUsage {
+	constraint FiveRecipeMinimum {
 	
 	check {
-		var instruction_links = self.instructions.select(i:InstructionRecipe|true);
-		var ingredient_links = self.ingredients.select(i:IngredientRecipe|true);
-		return 
-		instruction_links.forAll(i_r : InstructionRecipe | i_r.recipe <> self)
-		and ingredient_links.forAll(i_r : IngredientRecipe | i_r.recipe <> self);
+			var recipes = Category.all().collect(
+				c : Category | c.recipes).flatten();
+			return recipes.size() >= 5;
+	}
+	
+	message: "For a Cookbook to be a valid member of the Library it must have"+
+	" at least 5 recipes within it."
+	
+	}
+
+}
+
+operation extractAllLinks(recipe : Recipe) : Collection {
+	var links = recipe.instructions.select(i:RecipeLink|true);
+	links.addAll(recipe.ingredients.select(i:RecipeLink|true));
+	return links;
+}
+
+context Recipe {
+
+	constraint NoSelfUsageInstructions {
+	check {
+		var links = extractAllLinks(self);
+		var duplicate_flag = false;
+		while (not links.isEmpty()){
+			var recipe = links.removeAt(0).recipe;
+			links.addAll(extractAllLinks(recipe));
+			if (recipe.name = self.name){
+				duplicate_flag = true;
+				break;
+			}
+		}
+		return not duplicate_flag;
 	}
 	
 	message: "Recipes cannot use themselves. Please alter \"" + self.name + "\""
