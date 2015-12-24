@@ -15,15 +15,16 @@ class Library {
 
 class Cookbook extends NamedElement {
 	attr String author;
-	val Category[*] categories;
+	val Category[*]#cookbook categories;
 }
 
 class Category extends NamedElement {
+	ref Cookbook#categories cookbook;
 	val Recipe[1..*]#category recipes;
 }
 
 class Recipe extends NamedElement {
-	ref Category[1]#recipes category;
+	ref Category#recipes category;
 	val InstructionBase[1..*] instructions;
 	val IngredientBase[1..*] ingredients;
 }

@@ -1,0 +1,8 @@
+<html>
+<title> Cookbook Library - [%=recipe.category.cookbook.name %] - [%=recipe.name%] </title>
+<head>
+Cookbook Library - [%=recipe.category.cookbook.name %] - [%=recipe.name%]
+</head>
+<body>
+</body>
+</html>

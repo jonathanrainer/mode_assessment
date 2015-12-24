@@ -1,0 +1,26 @@
+rule LibraryToContentsMenu
+	transform library : Library {
+	
+		template : "libraryToMainMenu.egl"
+		
+		target : "gen/index.html"
+	
+}
+
+rule CookbookToContents
+	transform cookbook : Cookbook {
+	
+	template: "cookbookToContents.egl"
+	
+	target : "gen/" + cookbook.id + "/index.html"
+	
+	}
+	
+rule RecipeToPage
+	transform recipe : Recipe {
+	
+	template: "recipeToPage.egl"
+	
+	target: "gen/" + recipe.category.cookbook.id + "/" + recipe.id + ".html"
+	
+	}

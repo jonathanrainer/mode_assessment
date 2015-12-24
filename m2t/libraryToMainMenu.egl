@@ -1,0 +1,13 @@
+<html>
+<title> Cookbook Library - Main</title>
+<head>
+</head>
+<body>
+<h1> Cookbook Library </h1>
+<ul>
+[% for (cookbook in library.cookbooks) { %]
+	<li><a href="[%=cookbook.id%]/index.html"> [%=cookbook.name%] </a></li>
+[%}%]
+</ul>
+</body>
+</hmtl>

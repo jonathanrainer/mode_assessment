@@ -1,0 +1,25 @@
+<html>
+<title> Cookbook Library - [%=cookbook.name%] </title>
+<head>
+</head>
+<body>
+<h1> [%=cookbook.name%] </h1>
+<h2> Browse By Category </h2>
+<ul>
+[% for (category in cookbook.categories) { %]
+	<li> [%=category.name%] </li>
+[%}%]
+</ul>
+<h2> Browse By Recipe </h2>
+[% var recipes : new List; %]
+[% for (category in cookbook.categories) { %]
+	[% recipes.addAll(category.recipes); %]
+[%}%]
+[% recipes = recipes.sortBy(recipe: Recipe | recipe.name); %]
+<ul>
+[% for (recipe in recipes) { %]
+	<li> [%=recipe.name%] </li>
+[%}%]
+</ul>
+</body>
+</hmtl>
