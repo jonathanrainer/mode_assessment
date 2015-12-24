@@ -15,12 +15,22 @@ rule CookbookToContents
 	target : "gen/" + cookbook.id + "/index.html"
 	
 	}
+
 	
 rule RecipeToPage
 	transform recipe : Recipe {
 	
 	template: "recipeToPage.egl"
 	
-	target: "gen/" + recipe.category.cookbook.id + "/" + recipe.id + ".html"
+	target: "gen/" + recipe.category.cookbook.id + "/recipes/" + recipe.id + ".html"
+	
+	}
+	
+rule CategoryToCategoryContents
+	transform category : Category {
+	
+	template: "categoryToCategoryContents.egl"
+		
+	target: "gen/" + category.cookbook.id + "/categories/" + category.id + ".html"
 	
 	}

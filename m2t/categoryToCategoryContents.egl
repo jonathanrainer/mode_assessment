@@ -1,0 +1,13 @@
+<html>
+<title> Cookbook Library - [%=category.cookbook.name%] - [%=category.name%] </title>
+<head>
+<h1> [%=category.cookbook.name%] - [%=category.name.firstToUpperCase()%] </h1>
+</head>
+<body>
+<ul>
+[% for (recipe in category.recipes) { %]
+	<li>[%=recipe.name%] </a></li>
+[%}%]
+</ul>
+</body>
+</hmtl>
