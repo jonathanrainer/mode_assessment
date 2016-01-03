@@ -1,0 +1,26 @@
+var input = UserInput.prompt("Please enter a list of ingredients:\n\n NOTE: This should be done without "+
+"units initially as these will be added in as the process continues. \n\n Example: " +
+"Bread:500, Golden Syrup:4, Eggs:5 etc.");
+// Extract object version of list input by user.
+var ingredient_list = create_ingredient_list(input.split(",\\s+"));
+// Iterate over all the recipes and compare the ingredient sets
+for (recipe : Recipe in Recipe.allInstances()) {
+	// If an ingredient set matches completely then add that to the final list
+	ingredients = recipe.extract_all_ingredients();
+}
+// Print out the final list for the user to see.
+
+operation Recipe extract_all_ingredients() : Sequence(String) {
+	return Sequence{"1"};
+}
+
+operation create_ingredient_list(input : Sequence(String)) : Sequence(Ingredient) {
+	var results = Sequence(Ingredient);
+	for (elem in input) {
+		var pair = elem.split(":");
+		var quantity = Integer(pair[1]);
+		var unit = UserInput.choose("Please select a unit for the quantity given. NOTE: If there is no " +
+		"unit associated with your choice (say with eggs or lemons or similar) then select quantity",
+		Unit.eLiterals);
+		}
+}

@@ -1,54 +1,72 @@
 @namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
+@gmf
 package cookbooklibrary;
 
+@gmf.node(label="name")
 enum Unit {
-	grams; teaspoons; tablespoons; ml;
+	grams; teaspoons; tablespoons; millilitres; quantity;
 }
 
 abstract class NamedElement {
 	attr String name;
 }
 
+@gmf.diagram(diagram.extension="Y8185606")
 class Library {
+	@gmf.compartment
 	val Cookbook[*] cookbooks;
 }
 
+@gmf.node(label="name")
 class Cookbook extends NamedElement {
 	attr String author;
+	@gmf.compartment(layout="list")
 	val Category[*]#cookbook categories;
 }
 
+@gmf.node(label="name")
 class Category extends NamedElement {
 	ref Cookbook#categories cookbook;
+	@gmf.compartment(layout="list")
 	val Recipe[1..*]#category recipes;
 }
 
+@gmf.node(label="name")
 class Recipe extends NamedElement {
 	ref Category#recipes category;
-	val InstructionBase[1..*] instructions;
-	val IngredientBase[1..*] ingredients;
+	@gmf.compartment(layout="list")
+	val Instruction[1..*] instructions;
+	@gmf.compartment(layout="list")
+	val Ingredient[1..*] ingredients;
+	val RecipeLink[*] recipe_links;
 }
 
-abstract class IngredientBase extends NamedElement {}
-
-abstract class InstructionBase {
+@gmf.node(label="text")
+class Instruction {
 	attr String text;
 }
 
-class Instruction extends InstructionBase {}
-
-class InstructionRecipe extends InstructionBase, RecipeLink {}
-
-class IngredientRecipe extends IngredientBase, RecipeLink {}
-
-class RecipeLink {
+abstract class RecipeLink {
 	ref Recipe[1] recipe;
 }
 
-class Ingredient extends IngredientBase {
+@gmf.link(source="instruction", target="recipe", target.decoration="arrow")
+class InstructionRecipeLink extends RecipeLink{
+	ref Instruction[0..1] instruction;
+}
+
+@gmf.link(source="ingredient", target="recipe", target.decoration="arrow")
+class IngredientRecipeLink extends RecipeLink{
+	ref Ingredient[0..1] ingredient;
+}
+
+@gmf.node(label="name")
+class Ingredient extends NamedElement {
+	@gmf.compartment
 	val Measure[1] amount;
 }
 
+@gmf.node(label="amount, unit", label.pattern="{1} {0}")
 class Measure {
 	attr Unit unit;
 	attr Integer amount;
