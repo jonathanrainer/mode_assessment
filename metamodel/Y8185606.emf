@@ -1,5 +1,6 @@
 @namespace(uri="cookbooklibrary", prefix="cookbooklibrary")
 @gmf
+@emf.gen(fileExtensions="Y8185606")
 package cookbooklibrary;
 
 @gmf.node(label="name")
@@ -11,7 +12,7 @@ abstract class NamedElement {
 	attr String name;
 }
 
-@gmf.diagram(diagram.extension="Y8185606")
+@gmf.diagram(diagram.extension="Y8185606_diagram", model.extension="Y8185606")
 class Library {
 	@gmf.compartment
 	val Cookbook[*] cookbooks;
@@ -19,6 +20,7 @@ class Library {
 
 @gmf.node(label="name")
 class Cookbook extends NamedElement {
+	@gmf.label
 	attr String author;
 	@gmf.compartment(layout="list")
 	val Category[*]#cookbook categories;
