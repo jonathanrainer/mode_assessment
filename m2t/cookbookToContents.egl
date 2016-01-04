@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-<h1> [%=cookbook.name%] </h1>
+<h1> <a href="../index.html"> Library </a> - [%=cookbook.name%] </h1>
 <h2> Browse By Category </h2>
 <ul>
 [% for (category in cookbook.categories) { %]

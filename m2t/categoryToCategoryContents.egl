@@ -1,12 +1,13 @@
 <html>
 <title> Cookbook Library - [%=category.cookbook.name%] - [%=category.name%] </title>
 <head>
-<h1> [%=category.cookbook.name%] - [%=category.name.firstToUpperCase()%] </h1>
+<h1> <a href="../index.html"> Library </a> - 
+<a href="../index.html"> [%=category.cookbook.name%] </a> - [%=category.name.firstToUpperCase()%] </h1>
 </head>
 <body>
 <ul>
 [% for (recipe in category.recipes) { %]
-	<li>[%=recipe.name%] </a></li>
+	<li><a href="../recipes/[%=recipe.id%].html"> [%=recipe.name%] </a></li>
 [%}%]
 </ul>
 </body>
