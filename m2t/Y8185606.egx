@@ -1,4 +1,4 @@
-rule LibraryToContentsMenu
+rule LibraryToMainMenu
 	transform library : Library {
 	
 		template : "libraryToMainMenu.egl"

@@ -6,7 +6,7 @@
 <h1> Cookbook Library </h1>
 <ul>
 [% for (cookbook in library.cookbooks) { %]
-	<li><a href="[%=cookbook.id%]/index.html"> [%=cookbook.name%] </a></li>
+	<li><a href="[%=cookbook.id%]/index.html"> [%=cookbook.name%] </a> by [%=cookbook.author%] </li> 
 [%}%]
 </ul>
 </body>
