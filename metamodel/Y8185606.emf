@@ -12,13 +12,15 @@ abstract class NamedElement {
 	attr String name;
 }
 
-@gmf.diagram(diagram.extension="Y8185606_diagram", model.extension="Y8185606")
+@gmf.diagram(diagram.extension="Y8185606", onefile="true")
 class Library {
 	@gmf.compartment
 	val Cookbook[*] cookbooks;
 }
 
-@gmf.node(label="name")
+@gmf.node(label="name", tool.small.bundle="cookbook_library", 
+tool.small.path="metamodel/icons/small_cookbook.png", tool.large.bundle="cookbook_library",
+tool.large.path="metamodel/icons/large_cookbook.png", label.icon="true")
 class Cookbook extends NamedElement {
 	@gmf.label
 	attr String author;
@@ -28,14 +30,14 @@ class Cookbook extends NamedElement {
 
 @gmf.node(label="name")
 class Category extends NamedElement {
-	ref Cookbook#categories cookbook;
+	ref Cookbook[1]#categories cookbook;
 	@gmf.compartment(layout="list")
 	val Recipe[1..*]#category recipes;
 }
 
 @gmf.node(label="name")
 class Recipe extends NamedElement {
-	ref Category#recipes category;
+	ref Category[1]#recipes category;
 	@gmf.compartment(layout="list")
 	val Instruction[1..*] instructions;
 	@gmf.compartment(layout="list")

@@ -1,6 +1,14 @@
 context NamedElement {
+	// If an element has a name then it must not be empty which ensures the constraint that
+	// all recipes must have names, as well as every other named element. This is sort of 
+	// obvious because if something has a name, it being blank is somewhat strange.
 	constraint NameNotEmpty {
 		
+		// First check that the name is of the correct type, this prevents problems whereby when an
+		// object is created it's name is set to null rather than "". Then also check that it's
+		// name consists of more than just white space. It does have a false positive where if you 
+		// name something "  Custard" then it will fail however this is addressed in the message
+		// and is obviously an error if it appears at the beginning of a word.
 		check: self.name.isTypeOf(String) and self.name.matches("[^\\s]+.*")
 		
 		message: 	"Please ensure that the name of all objects of type " 
@@ -12,16 +20,22 @@ context NamedElement {
 context Recipe {
 	
 	critique NameCapitalisation {
-	
+		
+		// First check that the name actually exists or there's no point in bothering trying to check
+		// for capitalisation.
 		guard: self.satisfies("NameNotEmpty")
 		
 		check { 
+			// Take the name of the recipe and split it up into each of the words in the phrase.
 			for (part : String in self.name.split(" ")) {
+				// Check each first character to see if it's upper case or not and fail at the first 
+				// none upper case letter.
 				if (part.firstToUpperCase().charAt(0) <> part.charAt(0))
 				{
 					return false;
 				}
 			}
+			// If all is successful then return true.
 			return true;
 		 }
 		 
@@ -29,11 +43,15 @@ context Recipe {
 		 	title: "Correcting Capitalisation"
 		 	
 		 	do {
+		 		// Create a placeholder for the new string and split up the old string into words
 		 		var new_string = "";
 		 		var string_elements = self.name.split(" ");
+		 		// Iterate over each word and capitalise the first letter, adding it to the new string 
+		 		// being formed.
 		 		for (element : String in string_elements){
 		 			new_string = new_string + element.firstToUpperCase() + " ";
 		 		}
+		 		// Trim off any extraneous white space and then continue.
 		 		self.name = new_string.trim();
 		 	}
 		 }
@@ -43,11 +61,15 @@ context Recipe {
 context Category {
 
 	constraint UniqueName {
-	
+		// Check that the category itself has a name, or at least its name is a non-empty string,
+		// this ensures the conformance to the standard that all categories should have names.
 		guard: self.satisfies("NameNotEmpty")
-	
-		check: not Category.all().excluding(self).exists(
-		c: Category | c.name = self.name)
+		// To check for uniqueness grab all of the category objects but exclude the one currently
+		// under considration. Then check if in that created list there is a category with the same
+		// name as the one under consideration. If there is then fail, otherwise proceed. This
+		// does come with the caveat that it will fail repeatedly for duplicate entries but this is
+		// somewhat inevitable without creating a dependency loop.
+		check: not Category.all().excluding(self).exists(c: Category | c.name = self.name)
 		
 		message: "Categories cannot have duplicated names. Please rename one " 
 		+ "of the categories named \"" + self.name + "\" to something else."
@@ -57,7 +79,10 @@ context Category {
 }
 
 context Ingredient {
-
+	
+	// This constraint simply ensures that the quantities given in the ingredients are always non-zero,
+	// fulfilling the constraint that ingredients have to have names and amounts by enforcing them to 
+	// have non-zero amounts.
 	constraint NonZeroQuantities {
 	
 		guard: self.amount.isDefined()
@@ -73,26 +98,19 @@ context Ingredient {
 }
 
 context Cookbook {
-
+	
+	// This constraint ensures that each cookbook has a minimum of 5 recipes within it. 
 	constraint FiveRecipeMinimum {
 	
-	check {
-			var recipes = Category.all().collect(
-				c : Category | c.recipes).flatten();
-			return recipes.size() >= 5;
-	}
+	// Collect all the recipes from each of the categories within the cookbook and check there
+	// are 5 or more.
+	check : Category.all().collect(c : Category | c.recipes).flatten().size() >= 5
 	
 	message: "For a Cookbook to be a valid member of the Library it must have"+
 	" at least 5 recipes within it."
 	
 	}
 
-}
-
-operation extractAllLinks(recipe : Recipe) : Collection {
-	var links = recipe.instructions.select(i:RecipeLink|true);
-	links.addAll(recipe.ingredients.select(i:RecipeLink|true));
-	return links;
 }
 
 context Recipe {
@@ -116,4 +134,10 @@ context Recipe {
 	+ " accordingly."
 	
 	}
+}
+
+operation extractAllLinks(recipe : Recipe) : Collection {
+	var links = recipe.instructions.select(i:RecipeLink|true);
+	links.addAll(recipe.ingredients.select(i:RecipeLink|true));
+	return links;
 }
