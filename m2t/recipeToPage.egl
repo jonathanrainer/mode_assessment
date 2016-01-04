@@ -1,8 +1,43 @@
 <html>
 <title> Cookbook Library - [%=recipe.category.cookbook.name %] - [%=recipe.name%] </title>
 <head>
-Cookbook Library - [%=recipe.category.cookbook.name %] - [%=recipe.name%]
+<h1> <a href="../../index.html"> Library </a> - 
+	 <a href="../index.html">[%=recipe.category.cookbook.name %] </a> - 
+	 <a href="../categories/[%=recipe.category.id%].html">[%=recipe.category.name%] </a> - 
+	 [%=recipe.name%]
+</h1>
 </head>
 <body>
+<h2> Ingredients </h2>
+<ul>
+[% for (ingredient in recipe.ingredients) { %]
+	<li>
+	[% var links = recipe.recipe_links.select(i:IngredientRecipeLink | i.ingredient == ingredient);%]
+	[% if (links.size() == 1) {%]
+		<a href="[%=links.first().recipe.id%].html"> [%=ingredient.name%] </a>
+	[%}%]
+	[% else { %]
+	[%=ingredient.name%] - [%=ingredient.amount.amount%]
+	[% if (ingredient.amount.unit <> Unit#quantity) { %]
+		[%=ingredient.amount.unit%]
+	[%}%]
+	</li>
+	[%}%]
+[%}%]
+</ul>
+<h2> Method </h2>
+<ol>
+[% for (instruction in recipe.instructions) { %]
+	<li>
+	[% var links = recipe.recipe_links.select(i:InstructionRecipeLink | i.instruction == instruction);%]
+	[% if (links.size() == 1) {%]
+		<a href="[%=links.first().recipe.id%].html"> [%=instruction.text%] </a>
+	[%}%]
+	[% else { %]
+	[%=instruction.text%] 
+	[%}%]
+	</li>
+[%}%]
+</ol>
 </body>
 </html>
