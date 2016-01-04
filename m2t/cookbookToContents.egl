@@ -7,7 +7,7 @@
 <h2> Browse By Category </h2>
 <ul>
 [% for (category in cookbook.categories) { %]
-	<li> [%=category.name%] </li>
+	<li> <a href="categories/[%=category.id%].html"> [%=category.name%] </a></li>
 [%}%]
 </ul>
 <h2> Browse By Recipe </h2>
@@ -18,7 +18,7 @@
 [% recipes = recipes.sortBy(recipe: Recipe | recipe.name); %]
 <ul>
 [% for (recipe in recipes) { %]
-	<li> [%=recipe.name%] </li>
+	<li> <a href="recipes/[%=recipe.id%].html"> [%=recipe.name%] </a></li>
 [%}%]
 </ul>
 </body>
