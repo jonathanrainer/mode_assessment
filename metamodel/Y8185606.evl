@@ -115,29 +115,36 @@ context Cookbook {
 
 context Recipe {
 
-	constraint NoSelfUsageInstructions {
+	// This checks the constraint that no recipe should be able to us itself, 
+	// either directly or indirectly.
+	constraint NoSelfRecipeUsage {
 	check {
+		// First extract all of the recipe links that come from the recipe in question
 		var links = extractAllLinks(self);
-		var duplicate_flag = false;
+		// Then check each one in turn
 		while (not links.isEmpty()){
-			var recipe = links.removeAt(0).recipe;
+			// Extract the first recipe from the list
+			var recipe = links.removeAt(0);
+			// Extract all of the recipes that this new recipe refers to
 			links.addAll(extractAllLinks(recipe));
+			// If any of them have the same name as the one being checked stop immeadiately as
+			// there's been a loop found.
 			if (recipe.name = self.name){
-				duplicate_flag = true;
-				break;
+				return false;
 			}
 		}
-		return not duplicate_flag;
+		// Otherwise if there are no loops return true and eveything is fine.
+		return true;
 	}
 	
 	message: "Recipes cannot use themselves. Please alter \"" + self.name + "\""
-	+ " accordingly."
+	+ " or its dependencies accordingly."
 	
 	}
 }
 
+// Small snippet of code just to keep it abstracted as to how to extract all the recipes linked
+// to one paticular recipe.
 operation extractAllLinks(recipe : Recipe) : Collection {
-	var links = recipe.instructions.select(i:RecipeLink|true);
-	links.addAll(recipe.ingredients.select(i:RecipeLink|true));
-	return links;
+	return recipe.recipe_links.collect(l:RecipeLink | l.recipe);
 }
