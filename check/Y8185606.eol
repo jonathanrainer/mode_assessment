@@ -1,26 +1,93 @@
-var input = UserInput.prompt("Please enter a list of ingredients:\n\n NOTE: This should be done without "+
-"units initially as these will be added in as the process continues. \n\n Example: " +
-"Bread:500, Golden Syrup:4, Eggs:5 etc.");
-// Extract object version of list input by user.
-var ingredient_list = create_ingredient_list(input.split(",\\s+"));
+// Create a map of the names of the enums to their enum literals due to problems within EOL
+// itself this workaround is required to have access to the enums.
+var enum_map = Map{Unit#grams.name = Unit#grams, 
+Unit#teaspoons.name = Unit#teaspoons, Unit#tablespoons.name = Unit#tablespoons, 
+Unit#millilitres.name = Unit#millilitres, Unit#quantity.name =  Unit#quantity};
+// Ask the users to enter the contents of their cupboards in a syntax we can then parse.
+var input = System.user.prompt("Please enter a list of ingredients with units:\n\nNOTE: Please ensure that " +
+"the units are entered are within the list {" + extractEnumNames() +  "}, where quantity refers " +
+"to the idea of say eggs where you don't measure in grams but in how many you have.' \n\n Example: " +
+"Bread:500 grams, Golden Syrup:4 tablespoons, Eggs:5 quantity etc.");
+// Transform formatted string into a list.
+var input_list = input.split(",\\s+");
 // Iterate over all the recipes and compare the ingredient sets
-for (recipe : Recipe in Recipe.allInstances()) {
-	// If an ingredient set matches completely then add that to the final list
-	ingredients = recipe.extract_all_ingredients();
+var results = new Sequence();
+for (recipe : Recipe in Recipe.allInstances()) 
+{
+	var ingredients = recipe.extract_all_ingredients();
+	if (ingredients.size() > input_list.size())
+	{
+		continue;
+	}
+	var found = 0;
+	for (formatted_ingredient : String in input_list) 
+	{
+		var pair = formatted_ingredient.split(":");
+		var amount = pair[1].split(" ")[0].asInteger();
+		var unit = pair[1].split(" ")[1];
+		for(ingredient in ingredients) 
+		{
+			if(ingredient.name == pair[0] and ingredient.amount.unit.name == unit and 
+					ingredient.amount.amount <= amount)
+			{
+				found = found + 1;
+				break;
+			}
+		}
+	}
+	if (found == ingredients.size()) {
+		results.add(recipe);
+	}
 }
-// Print out the final list for the user to see.
+var result_string = construct_result_string(results);
+System.user.inform(result_string);
+
+operation construct_result_string(results : Sequence(Recipe)) : String {
+	var final_string = "From the given set of ingredients you would be able to make:\n\n";
+	for (recipe in results) {
+		var part_string = "- " + recipe.name + " located in: " + recipe.category.cookbook.name + 
+		" by " + recipe.category.cookbook.author + "\n";
+		final_string = final_string + part_string;
+	}
+	return final_string;
+}
 
 operation Recipe extract_all_ingredients() : Sequence(String) {
-	return Sequence{"1"};
+	// Create a blank list to store all the ingredients
+	var flattened_ingredient_list = Sequence{};
+	// Extract all the ingredients that are not the source of a link
+	flattened_ingredient_list.addAll(self.extractAllFlatIngredients());
+	// Grab all of the links that originate in this recipe, repeat the process until there are no
+	// more links to get.
+	var links = self.extractAllLinks();
+	// Then check each one in turn
+	while (not links.isEmpty()){
+			// Extract the first recipe from the list
+			var recipe = links.removeAt(0);
+			// Extract all of the recipes that this new recipe refers to
+			links.addAll(recipe.extractAllLinks());
+			// If any of them have the same name as the one being checked stop immeadiately as
+			// there's been a loop found.
+			flattened_ingredient_list.addAll(recipe.extractAllFlatIngredients());
+	}
+	return flattened_ingredient_list;
 }
 
-operation create_ingredient_list(input : Sequence(String)) : Sequence(Ingredient) {
-	var results = Sequence(Ingredient);
-	for (elem in input) {
-		var pair = elem.split(":");
-		var quantity = Integer(pair[1]);
-		var unit = UserInput.choose("Please select a unit for the quantity given. NOTE: If there is no " +
-		"unit associated with your choice (say with eggs or lemons or similar) then select quantity",
-		Unit.eLiterals);
-		}
+// Small snippet of code just to keep it abstracted as to how to extract all the recipes linked
+// to one paticular recipe.
+operation Recipe extractAllLinks() : Collection {
+	return self.recipe_links.collect(l:RecipeLink | l.recipe);
+}
+
+operation Recipe extractAllFlatIngredients() : Collection {
+	return self.ingredients.excluding(self.recipe_links.collect(l:IngredientRecipeLink | l.ingredient));
+}
+
+operation extractEnumNames() : String {
+	var enum_keys = enum_map.keySet().asSequence();
+	var new_string = "";
+	for (enum_key in enum_keys) {
+		new_string = new_string + ", " + enum_key;
+	}
+	return new_string.substring(2);
 }
