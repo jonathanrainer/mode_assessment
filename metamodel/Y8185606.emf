@@ -39,9 +39,9 @@ class Category extends NamedElement {
 class Recipe extends NamedElement {
 	ref Category[1]#recipes category;
 	@gmf.compartment(layout="list")
-	val Instruction[1..*] instructions;
-	@gmf.compartment(layout="list")
 	val Ingredient[1..*] ingredients;
+	@gmf.compartment(layout="list")
+	val Instruction[1..*] instructions;
 	val RecipeLink[*] recipe_links;
 }
 
