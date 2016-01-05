@@ -1,0 +1,10 @@
+/bin/
+/META-INF/
+/build.properties
+/plugin.properties
+/plugin.xml
+/src/
+/.metadata/
+.classpath
+.project
+models/.settings/
